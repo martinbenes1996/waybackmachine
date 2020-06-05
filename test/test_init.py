@@ -59,14 +59,22 @@ class TestInit(unittest.TestCase):
         
     def test_explicit(self):
         # explicit values over default configuration
-        x,now = self.test_constructor(start = datetime(), config = 'default')
+        x,now = self.test_constructor(start = datetime(2020,5,1), config = 'default')
         # ...
     
-    def test_date_format(self):
+    def test_datetime_format(self):
         # string date values
-        x,now = self.test_constructor(start = datetime(), config = 'default')
-        # ...
-        
+        x,now = self.test_constructor(start = "2020-11-22", end = "2020-01-01 08:00", config = 'default')
+        start = datetime(2020, 11, 22)
+        end = datetime(2020, 1, 1, 8)
+        # === test ===
+        # now, start == datetime.now()
+        self.assertDatetimeEqual(x.now(), start)
+        self.assertDatetimeEqual(x.start(), start)
+        # end == 1st January 2020
+        self.assertDatetimeEqual(x.end(), end)
+        # step == 12h
+        self.assertEqual(x.step(), timedelta(days = 1))
         
         
             

@@ -51,6 +51,7 @@ class WaybackMachine:
         if step is not None: self._step = self._parse_datetime(step)
         # set start
         self._now = self._start
+        self._responses = True
     def now(self):
         return self._now
     def start(self):
@@ -59,26 +60,33 @@ class WaybackMachine:
         return self._end
     def step(self):
         return self._step
+    def yield_fetchers(self, yi = True):
+        self._responses = not yi
         
     def __iter__(self):
         # yield real url
-        with Fetcher(self._url, self._now) as response:
-            yield response
+        if self._responses:
+            with Fetcher(self._url, self._now) as response:
+                yield response
+        else:
+            yield Fetcher(self._url, self._now)
         # yield date sequence from archive
-        dt = self._now
         versions = set()
-        while dt > datetime(2020,3,1):
-            dt -= timedelta(hours = 12)
+        while self._now > self._end:
+            self._now -= self._step
             # get older version
-            archive_url = self._construct_archive_url(dt)
-            url,url_dt = self._fetch_archive(archive_url)
-            print(dt, url_dt)
-            if url_dt not in versions:
-                versions.add(url_dt)
-                with Fetcher(url, url_dt) as response:
-                    yield response
-            if url_dt < dt:
-                dt = url_dt
+            archive_url = self._construct_archive_url(self._now)
+            version_url,version_time = self._fetch_archive(archive_url)
+            #print(self._now, version_time)
+            if version_time not in versions:
+                versions.add(version_time)
+                if self._responses:
+                    with Fetcher(version_url, version_time) as response:
+                        yield response
+                else:
+                    yield Fetcher(version_url, version_time)
+                if version_time < self._now:
+                    self._now = version_time
             
     def _construct_archive_url(self, dt = None):
         archive_url = f"http://archive.org/wayback/available?url={self._url}"
@@ -99,7 +107,7 @@ class WaybackMachine:
             raise WaybackMachineError("error parsing archive response")
     
     @staticmethod
-    def _parse_datetime(self, dt):
+    def _parse_datetime(dt):
         if isinstance(dt, datetime):
             return dt
         elif isinstance(dt, date):
@@ -116,7 +124,7 @@ class WaybackMachine:
         else:
             raise TypeError("invalid input date type")
     @staticmethod
-    def _parse_timedelte(self, td):
+    def _parse_timedelte(td):
         if isinstance(td, timedelta):
             return td
         elif isinstance(td, str):

@@ -6,6 +6,7 @@ sys.path.append(".")
 
 # === unit tests ===
 from test_init import *
+from test_iterate import *
 # ==================
 
 # run unittests
