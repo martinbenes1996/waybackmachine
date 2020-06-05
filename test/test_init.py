@@ -1,4 +1,5 @@
 
+from datetime import datetime, timedelta
 import sys
 import unittest
 
@@ -7,14 +8,65 @@ sys.path.append(".")
 from waybackmachine import WaybackMachine
 
 class TestInit(unittest.TestCase):
+    _datetime_eps = timedelta(seconds = 5)
+    def assertDatetimeEqual(self, t1, t2):
+        self.assertLessEqual(abs(t1 - t2), self._datetime_eps)
+        
     def test_nourl(self):
         self.assertRaises(TypeError, WaybackMachine)
-    def test_url(self):
+    def test_constructor(self, *args, **kwargs):
         # constructing
-        raised = False
-        try: x = WaybackMachine('https://www.gov.pl/web/koronawirus/wykaz-zarazen-koronawirusem-sars-cov-2')
-        except: raised = True
-        self.assertFalse(raised)
+        try:
+            x = WaybackMachine('https://www.gov.pl/web/koronawirus/wykaz-zarazen-koronawirusem-sars-cov-2', *args, **kwargs)
+            now = datetime.now()
+        except Exception as e:
+            raised = True
+            self.assertFalse(raised)
+            return
+        # now
+        self.assertIsInstance(x.now(), datetime)
+        # start
+        self.assertIsInstance(x.start(), datetime)
+        # end
+        self.assertIsInstance(x.end(), datetime)
+        # step
+        self.assertIsInstance(x.step(), timedelta)
+        return x, now
+    
+    def test_configuration_default(self):
+        # default configuration
+        x,now = self.test_constructor(config = 'default')
+        # === test ===
+        # now, start == datetime.now()
+        self.assertDatetimeEqual(x.now(), now)
+        self.assertDatetimeEqual(x.start(), now)
+        # end == beginning of current year
+        self.assertDatetimeEqual(x.end(), datetime(now.year,1,1))
+        # step == 1 day
+        self.assertEqual(x.step(), timedelta(days = 1))
+        
+    def test_configuration_covid(self):
+        # default configuration
+        x,now = self.test_constructor(config = 'covid')
+        # === test ===
+        # now, start == datetime.now()
+        self.assertDatetimeEqual(x.now(), now)
+        self.assertDatetimeEqual(x.start(), now)
+        # end == 1st January 2020
+        self.assertDatetimeEqual(x.end(), datetime(2020,1,1))
+        # step == 12h
+        self.assertEqual(x.step(), timedelta(hours = 12))
+        
+    def test_explicit(self):
+        # explicit values over default configuration
+        x,now = self.test_constructor(start = datetime(), config = 'default')
+        # ...
+    
+    def test_date_format(self):
+        # string date values
+        x,now = self.test_constructor(start = datetime(), config = 'default')
+        # ...
+        
         
         
             

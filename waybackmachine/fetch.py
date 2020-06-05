@@ -1,6 +1,7 @@
 
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta,date
 import json
+import re
 import requests
 
 class Fetcher:
@@ -34,23 +35,30 @@ class WaybackMachineError(Exception):
 # 'https://www.gov.pl/web/koronawirus/wykaz-zarazen-koronawirusem-sars-cov-2'
 class WaybackMachine:
     _config = {
-        'default': (datetime.now, lambda : datetime(datetime.now().year), timedelta(days = 1))
+        'default': (datetime.now, lambda : datetime(datetime.now().year, 1, 1), lambda : timedelta(days = 1)),
+        'covid': (datetime.now, lambda : datetime(2020,1,1), lambda : timedelta(hours = 12))
     }
-    def __init__(self, url, start = None, end = None, step = None, configuration = 'default'):
+    def __init__(self, url, start = None, end = None, step = None, config = 'default'):
         self._url = url
         # parse config
         try:
-            self._now, self._last, self._step = [i() for i in self._config[configuration]]
+            self._start, self._end, self._step = [i() for i in self._config[config]]
         except:
-            self._now, self._last, self._step = [i() for i in self._config[ 'default' ]]
+            self._start, self._end, self._step = [i() for i in self._config[ 'default' ]]
         # parse explicit settings
-        if start is not None: self._now = start
-        if end is not None: self._last = end
-        if step is not None: self._step = step
-        
-        print("Now:", self._now)
-        print("Last:", self._last)
-        print("Step:", self._step)
+        if start is not None: self._start = self._parse_datetime(start)
+        if end is not None: self._end = self._parse_datetime(end)
+        if step is not None: self._step = self._parse_datetime(step)
+        # set start
+        self._now = self._start
+    def now(self):
+        return self._now
+    def start(self):
+        return self._start
+    def end(self):
+        return self._end
+    def step(self):
+        return self._step
         
     def __iter__(self):
         # yield real url
@@ -89,5 +97,34 @@ class WaybackMachine:
             return x['url'],datetime.strptime(x['timestamp'], "%Y%m%d%H%M%S")
         except:
             raise WaybackMachineError("error parsing archive response")
+    
+    @staticmethod
+    def _parse_datetime(self, dt):
+        if isinstance(dt, datetime):
+            return dt
+        elif isinstance(dt, date):
+            return datetime(dt.year, dt.month, dt.day)
+        elif isinstance(dt, str):
+            for fmt in ["%Y-%m-%d", "%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"]:
+                try:
+                    dt = datetime.strptime(dt, fmt)
+                    return dt
+                except:
+                    pass
+            else:
+                raise ValueError("invalid input date string format")
+        else:
+            raise TypeError("invalid input date type")
+    @staticmethod
+    def _parse_timedelte(self, td):
+        if isinstance(td, timedelta):
+            return td
+        elif isinstance(td, str):
+            # ...
+            return timedelta(days = 24)
+        elif isinstance(td, float) or isinstance(td, int):
+            return timedelta(seconds = td)
+        else:
+            raise TypeError("invalid input timedelta type")
 
 __all__ = ["Fetcher","WaybackMachine"]
