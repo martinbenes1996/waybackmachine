@@ -1,14 +1,17 @@
 
 from datetime import datetime,timedelta,date
 import json
+import logging
 import re
 import requests
 
 class Fetcher:
     def __init__(self, url, dt):
+        self._log = logging.getLogger(self.__class__.__name__)
         self._url = url
         self._dt = dt
     def __call__(self):
+        self._log.debug(f"GET: {self._url}")
         self._response = requests.get(self._url)
         return self._response
     def __enter__(self):
@@ -39,6 +42,7 @@ class WaybackMachine:
         'covid': (datetime.now, lambda : datetime(2020,1,1), lambda : timedelta(hours = 12))
     }
     def __init__(self, url, start = None, end = None, step = None, config = 'default'):
+        self._log = logging.getLogger(self.__class__.__name__)
         self._url = url
         # parse config
         try:
@@ -78,8 +82,11 @@ class WaybackMachine:
             archive_url = self._construct_archive_url(self._now)
             version_url,version_time = self._fetch_archive(archive_url)
             #print(self._now, version_time)
+            if version_time < self._end:
+                break
             if version_time not in versions:
                 versions.add(version_time)
+                self._log.info(f"Found ({version_time}) {self._url}")
                 if self._responses:
                     with Fetcher(version_url, version_time) as response:
                         yield response
@@ -127,9 +134,9 @@ class WaybackMachine:
     def _parse_timedelte(td):
         if isinstance(td, timedelta):
             return td
-        elif isinstance(td, str):
-            # ...
-            return timedelta(days = 24)
+        #elif isinstance(td, str):
+        #    # todo
+        #    return timedelta(days = 24)
         elif isinstance(td, float) or isinstance(td, int):
             return timedelta(seconds = td)
         else:

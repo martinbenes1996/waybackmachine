@@ -18,38 +18,65 @@ Simple usage of the `WaybackMachine` class is as
 ```python
 from waybackmachine import WaybackMachine
 
-url = "https://www.folkhalsomyndigheten.se/smittskydd-beredskap/utbrott/aktuella-utbrott/covid-19/bekraftade-fall-i-sverige/"
+url = "https://www.gov.pl/web/koronawirus/wykaz-zarazen-koronawirusem-sars-cov-2"
 for response in WaybackMachine(url):
     # process response
     pass
 ```
 
-In the code the requests are being done from the newest (to the url itself) and then back in history to older and older versions saved on archive.
+The iterated version goes from newest to the older and older version all the way to end date at given step of date axis for querying the archive.
 
-Parameterization will be later broaden to be more general. Currently the project is used for fetching COVID-19 data.
+Update of package is done with
 
 ```bash
 pip install --upgrade waybackmachine
 ```
 
-## Parametrization
+### Start, end and step configuration
 
-### date
+Library enables setting of start date, end date and step size as timedelta.
 
-By default the start date is `today`. End date is currently set to `2020-03-01`.
+Since iterating is done backwards in time, **end date precedes start date!**
 
-Date will be more general in the future.
+Setting the querying for weekly from 1st May back to 1st February 2020 is done with
 
 ```python
+from datetime import datetime,timedelta
 from waybackmachine import WaybackMachine
 
-url = "https://www.folkhalsomyndigheten.se/smittskydd-beredskap/utbrott/aktuella-utbrott/covid-19/bekraftade-fall-i-sverige/"
-
-for response in WaybackMachine(url, "2020-04-01"): # start from 1st April 2020 and go back
+url = "https://www.liu.se/"
+for response in WaybackMachine(url, start = datetime(2020,5,1), end = datetime(2020,2,1), step = timedelta(days = 7)):
     # process response
     pass
 ```
 
+The date can be also specified one of following string formats:
+
+* *%Y-%m-%d*
+* *%Y-%m-%d %H:%M*
+* *%Y-%m-%d %H:%M:%S*
+
+```python
+for response in WaybackMachine(url, start = "2020-05-01", end = "2020-02-01", step = timedelta(days = 7)):
+    # process response
+    pass
+```
+
+*String representation of timedelta will be added.*
+
+
+
+### Configurations
+
+On frequent use-cases, custom configurations of parameters are added to the packages.
+
+These consist of default parameter values.
+
+So far following configurations are available:
+
+* *default* - start is *now()*, end is beginning of year of start (hence length can be 0 - 365 days), 1 day step
+* *covid* - start is *now()* (might be changed, if covid disappears), end is *2020-01-01*, COVID-19 spread into the world after. *In China the COVID-19 has already occurred before!*. Step is 12 h.
+ 
 ## Contribution
 
 Developed by [Martin Benes](https://github.com/martinbenes1996).
