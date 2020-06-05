@@ -31,13 +31,27 @@ class WaybackMachineError(Exception):
         return self._msg
 
 # 'https://en.wikipedia.org/wiki/COVID-19_pandemic_in_Poland'
+# 'https://www.gov.pl/web/koronawirus/wykaz-zarazen-koronawirusem-sars-cov-2'
 class WaybackMachine:
-    def __init__(self, url='https://www.gov.pl/web/koronawirus/wykaz-zarazen-koronawirusem-sars-cov-2', dt = None):
+    _config = {
+        'default': (datetime.now, lambda : datetime(datetime.now().year), timedelta(days = 1))
+    }
+    def __init__(self, url, start = None, end = None, step = None, configuration = 'default'):
         self._url = url
-        if dt is None:
-            self._now = datetime.now()
-        else:
-            self._now = dt
+        # parse config
+        try:
+            self._now, self._last, self._step = [i() for i in self._config[configuration]]
+        except:
+            self._now, self._last, self._step = [i() for i in self._config[ 'default' ]]
+        # parse explicit settings
+        if start is not None: self._now = start
+        if end is not None: self._last = end
+        if step is not None: self._step = step
+        
+        print("Now:", self._now)
+        print("Last:", self._last)
+        print("Step:", self._step)
+        
     def __iter__(self):
         # yield real url
         with Fetcher(self._url, self._now) as response:
