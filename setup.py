@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="UTF-8") as fh:
 
 setuptools.setup(
   name = 'waybackmachine',
-  version = '0.0.2',
+  version = '0.1.0',
   author = 'Martin Beneš',
   author_email = 'martinbenes1996@gmail.com',
   description = 'Envelope for archive.org API.',
@@ -14,12 +14,12 @@ setuptools.setup(
   packages=setuptools.find_packages(),
   license='MPL',
   url = 'https://github.com/martinbenes1996/waybackmachine',
-  download_url = 'https://github.com/martinbenes1996/waybackmachine/archive/0.0.2.tar.gz',
+  download_url = 'https://github.com/martinbenes1996/waybackmachine/archive/0.1.0.tar.gz',
   keywords = ['waybackmachine', 'archive', 'web', 'html', 'webscraping'],
   install_requires=[],
   package_dir={'': '.'},
   classifiers=[
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'Intended Audience :: Science/Research',
     'Intended Audience :: Developers',
     'Intended Audience :: Other Audience',
