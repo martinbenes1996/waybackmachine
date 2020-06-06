@@ -71,7 +71,7 @@ class WaybackMachine:
         # yield real url
         if self._responses:
             with Fetcher(self._url, self._now) as response:
-                yield response
+                yield response, self._now
         else:
             yield Fetcher(self._url, self._now)
         # yield date sequence from archive
@@ -89,7 +89,7 @@ class WaybackMachine:
                 self._log.info(f"Found ({version_time}) {self._url}")
                 if self._responses:
                     with Fetcher(version_url, version_time) as response:
-                        yield response
+                        yield response, version_time
                 else:
                     yield Fetcher(version_url, version_time)
                 if version_time < self._now:
@@ -102,16 +102,20 @@ class WaybackMachine:
         return archive_url
     def _fetch_archive(self, archive_url):
         # fetch
+        connection_fail = False
         try:
             response = requests.get(archive_url)
         except:
+            connection_fail = True
+        if connection_fail:
             raise WaybackMachineError("failed connecting to archive")
         try:
             x = json.loads(response.text)['archived_snapshots']['closest']
             # parse
             return x['url'],datetime.strptime(x['timestamp'], "%Y%m%d%H%M%S")
         except:
-            raise WaybackMachineError("error parsing archive response")
+            pass
+        raise WaybackMachineError("error parsing archive response")
     
     @staticmethod
     def _parse_datetime(dt):
