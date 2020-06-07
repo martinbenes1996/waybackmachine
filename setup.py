@@ -1,11 +1,18 @@
 
+# requirements
+try:
+  with open('requirements.txt') as f:
+    reqs = f.read().splitlines()
+except:
+  reqs = []
+  
 import setuptools
 with open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
   name = 'waybackmachine',
-  version = '0.1.0',
+  version = '0.1.1',
   author = 'Martin Beneš',
   author_email = 'martinbenes1996@gmail.com',
   description = 'Envelope for archive.org API.',
@@ -14,9 +21,9 @@ setuptools.setup(
   packages=setuptools.find_packages(),
   license='MPL',
   url = 'https://github.com/martinbenes1996/waybackmachine',
-  download_url = 'https://github.com/martinbenes1996/waybackmachine/archive/0.1.0.tar.gz',
+  download_url = 'https://github.com/martinbenes1996/waybackmachine/archive/0.1.1.tar.gz',
   keywords = ['waybackmachine', 'archive', 'web', 'html', 'webscraping'],
-  install_requires=[],
+  install_requires = reqs,
   package_dir={'': '.'},
   classifiers=[
     'Development Status :: 4 - Beta',
