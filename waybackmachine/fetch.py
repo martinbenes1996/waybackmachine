@@ -46,7 +46,8 @@ class WaybackMachine:
         # yield date sequence from archive
         versions = set()
         while not self._now or self._now > self._end:
-            self._log.info(f"searching in time {self._now.strftime('%Y-%m-%d %H:%M:%S')}")
+            now = self._now.strftime('%Y-%m-%d %H:%M:%S') if self._now else "now"
+            self._log.info(f"searching in time {now}")
             # get older version
             archive_url = self._construct_archive_url(self._now)
             html,version_time = self._fetch_archive(archive_url)
