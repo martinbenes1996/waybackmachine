@@ -26,6 +26,11 @@ for response,version_time in WaybackMachine(url):
 
 The iterated version goes from newest to the older and older version all the way to end date at given step of date axis for querying the archive.
 
+Returned are
+
+* `response` = string response
+* `version_time` = datetime of the version
+
 Update of package is done with
 
 ```bash

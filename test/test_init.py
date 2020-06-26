@@ -23,10 +23,6 @@ class TestInit(unittest.TestCase):
             raised = True
             self.assertFalse(raised)
             return
-        # now
-        self.assertIsInstance(x.now(), datetime)
-        # start
-        self.assertIsInstance(x.start(), datetime)
         # end
         self.assertIsInstance(x.end(), datetime)
         # step
@@ -38,8 +34,8 @@ class TestInit(unittest.TestCase):
         x,now = self.test_constructor(config = 'default')
         # === test ===
         # now, start == datetime.now()
-        self.assertDatetimeEqual(x.now(), now)
-        self.assertDatetimeEqual(x.start(), now)
+        self.assertTrue(x.now() is None)
+        self.assertTrue(x.start() is None)
         # end == beginning of current year
         self.assertDatetimeEqual(x.end(), datetime(now.year,1,1))
         # step == 1 day
@@ -49,9 +45,9 @@ class TestInit(unittest.TestCase):
         # default configuration
         x,now = self.test_constructor(config = 'covid')
         # === test ===
-        # now, start == datetime.now()
-        self.assertDatetimeEqual(x.now(), now)
-        self.assertDatetimeEqual(x.start(), now)
+        # now, start == None
+        self.assertTrue(x.now() is None)
+        self.assertTrue(x.start() is None)
         # end == 1st January 2020
         self.assertDatetimeEqual(x.end(), datetime(2020,1,1))
         # step == 12h
