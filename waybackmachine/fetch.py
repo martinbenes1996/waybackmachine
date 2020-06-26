@@ -68,16 +68,10 @@ class WaybackMachine:
         self._responses = not yi
         
     def __iter__(self):
-        # yield real url
-        if self._responses:
-            with Fetcher(self._url, self._now) as response:
-                yield response, self._now
-        else:
-            yield Fetcher(self._url, self._now)
         # yield date sequence from archive
         versions = set()
         while self._now > self._end:
-            self._now -= self._step
+            self._log.info(f"searching in time {self._now.strftime('%Y-%m-%d %H:%M:%S')}")
             # get older version
             archive_url = self._construct_archive_url(self._now)
             version_url,version_time = self._fetch_archive(archive_url)
@@ -94,6 +88,7 @@ class WaybackMachine:
                     yield Fetcher(version_url, version_time)
                 if version_time < self._now:
                     self._now = version_time
+            self._now -= self._step
             
     def _construct_archive_url(self, dt = None):
         archive_url = f"http://archive.org/wayback/available?url={self._url}"
