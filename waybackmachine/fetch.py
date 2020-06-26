@@ -4,7 +4,6 @@ import json
 import logging
 import re
 
-from bs4 import BeautifulSoup
 import requests
     
 class WaybackMachineError(Exception):
@@ -88,14 +87,7 @@ class WaybackMachine:
         try:
             dt = re.search(r'^http://web\.archive\.org/web/([0-9]+)/.*', response.url).group(1)
             return response.text, datetime.strptime(dt, "%Y%m%d%H%M%S")
-            tree = BeautifulSoup(response.text, features="lxml")
-            link = tree.head.find("meta")
-            print(link)
-            #link = tree.head.find("link", {"rel": "canonical"})
-            print(link)
-            return link
-        except Exception as e:
-            raise e
+        except: pass
         raise WaybackMachineError("error parsing archive response")
     
     @staticmethod
