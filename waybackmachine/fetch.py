@@ -52,7 +52,7 @@ class WaybackMachine:
         # parse explicit settings
         if start is not None: self._start = self._parse_datetime(start)
         if end is not None: self._end = self._parse_datetime(end)
-        if step is not None: self._step = self._parse_datetime(step)
+        if step is not None: self._step = self._parse_timedelta(step)
         # set start
         self._now = self._start
         self._responses = True
@@ -135,7 +135,7 @@ class WaybackMachine:
         else:
             raise TypeError("invalid input date type")
     @staticmethod
-    def _parse_timedelte(td):
+    def _parse_timedelta(td):
         if isinstance(td, timedelta):
             return td
         #elif isinstance(td, str):
