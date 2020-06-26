@@ -45,7 +45,7 @@ class WaybackMachine:
     def __iter__(self):
         # yield date sequence from archive
         versions = set()
-        while self._now > self._end:
+        while not self._now or self._now > self._end:
             self._log.info(f"searching in time {self._now.strftime('%Y-%m-%d %H:%M:%S')}")
             # get older version
             archive_url = self._construct_archive_url(self._now)
