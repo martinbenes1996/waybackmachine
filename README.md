@@ -28,7 +28,7 @@ The iterated version goes from newest to the older and older version all the way
 
 Returned are
 
-* `response` = string response
+* `response` = response object from `requests`
 * `version_time` = datetime of the version
 
 Update of package is done with

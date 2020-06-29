@@ -50,14 +50,14 @@ class WaybackMachine:
             self._log.info(f"searching in time {now}")
             # get older version
             archive_url = self._construct_archive_url(self._now)
-            html,version_time = self._fetch_archive(archive_url)
+            response,version_time = self._fetch_archive(archive_url)
             #print(self._now, version_time)
             if version_time < self._end:
                 break
             if version_time not in versions:
                 versions.add(version_time)
                 self._log.info(f"Found version from {version_time}")
-                yield html, version_time
+                yield response, version_time
                 if not self._now or version_time < self._now:
                     self._now = version_time
             self._now -= self._step
@@ -87,7 +87,7 @@ class WaybackMachine:
         #    pass
         try:
             dt = re.search(r'^http://web\.archive\.org/web/([0-9]+)/.*', response.url).group(1)
-            return response.text, datetime.strptime(dt, "%Y%m%d%H%M%S")
+            return response, datetime.strptime(dt, "%Y%m%d%H%M%S")
         except: pass
         raise WaybackMachineError("error parsing archive response")
     
