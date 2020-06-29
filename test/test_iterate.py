@@ -1,5 +1,6 @@
 
 from datetime import datetime, timedelta
+import requests
 import sys
 import unittest
 
@@ -20,7 +21,7 @@ class TestIterate(unittest.TestCase):
                 self.assertLess(version_date, previous)
             previous = version_date
             # check status
-            self.assertIsInstance(response, str)
+            self.assertIsInstance(response, requests.Response)
     
     #def test_now(self):
     #    print("test_now")
