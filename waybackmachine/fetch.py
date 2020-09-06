@@ -22,6 +22,8 @@ class WaybackMachine:
     def __init__(self, url, start = None, end = None, step = None, config = 'default'):
         self._log = logging.getLogger(self.__class__.__name__)
         self._url = url
+        # current version too
+        self._current = start is None
         # parse config
         try:
             self._start, self._end, self._step = [i() for i in self._config[config]]
@@ -41,13 +43,23 @@ class WaybackMachine:
         return self._end
     def step(self):
         return self._step
-        
+    
+    def _current_version(self):
+        self._log.info(f"searching version now")
+        # fetch
+        connection_fail = False
+        try: response = requests.get(self._url)
+        except: connection_fail = True
+        if connection_fail:
+            raise WaybackMachineError("failed connecting to archive")
+        return response, datetime.now()
     def __iter__(self):
+        if self._current: yield self._current_version()
         # yield date sequence from archive
         versions = set()
         while not self._now or self._now > self._end:
             now = self._now.strftime('%Y-%m-%d %H:%M:%S') if self._now else "now"
-            self._log.info(f"searching in time {now}")
+            self._log.info(f"searching archive {now}")
             # get older version
             archive_url = self._construct_archive_url(self._now)
             response,version_time = self._fetch_archive(archive_url)

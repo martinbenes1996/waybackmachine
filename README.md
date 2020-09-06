@@ -69,6 +69,12 @@ for response,version_time in WaybackMachine(url, start = "2020-05-01", end = "20
 
 *String representation of timedelta will be added.*
 
+### Current version
+
+If `start` is `None`, the looup will start with fetching current page (not from archive).
+
+To avoid this behavior, manually set `start = datetime.datetime.now()`.
+
 
 
 ### Configurations
