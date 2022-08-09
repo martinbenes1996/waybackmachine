@@ -20,7 +20,30 @@ class WaybackMachineRecord:
     url:str
     response:requests.Response
 
-def fetch_current(url):
+def fetch_summary(url:str):
+    url = urllib.parse.quote_plus(url)
+    archive_url = f"https://web.archive.org/__wb/sparkline?output=json&url={url}&collection=web"
+    referer = f"https://web.archive.org/web/{datetime.now().year}0000000000*/{url}"
+    # fetch
+    try:
+        response = requests.get(archive_url, headers={'referer': referer})
+    # on fail
+    except:
+        raise WaybackMachineError("failed fetching recording meta")
+    # parse datetimes
+    try:
+        res = response.json()
+    except:
+        raise WaybackMachineError("failed parsing JSON response")
+    if not res:
+        return {}, None, None
+    return (
+        res['years'],
+        datetime.strptime(res['first_ts'], '%Y%m%d%H%M%S'),
+        datetime.strptime(res['last_ts'], '%Y%m%d%H%M%S'),
+    )
+
+def fetch_current(url:str) -> WaybackMachineRecord:
     """Fetches current version of the page."""
     logging.info("fetching current version")
     # fetch
@@ -36,6 +59,7 @@ def fetch_current(url):
         response=response,
     )
 
+
 def fetch_closest_archived(url:str, date:datetime) -> WaybackMachineRecord:
     """Fetch archived website version, closest to the given time.
 
@@ -44,6 +68,7 @@ def fetch_closest_archived(url:str, date:datetime) -> WaybackMachineRecord:
         date (datetime): Datetime of version.
     """
     # construct archive url
+    url = urllib.parse.quote_plus(url)
     archive_url = f"http://web.archive.org/web/{date.strftime('%Y%m%d%H%M%S')}/{url}"
     # fetch
     try:
@@ -87,6 +112,7 @@ def fetch_archived(url:str, date:datetime):
         for i in res['items']
     ], reverse=True)
 
+# 'https://web.archive.org/__wb/sparkline?output=json&url=mbenes.me&collection=web'
 
 def browse(
     url:str,
@@ -103,6 +129,14 @@ def browse(
     # parse
     start = parse_datetime(start)
     end = parse_datetime(end)
+    # fetch summary
+    years, last, first = fetch_summary(url)
+    if start < first:
+        start = first
+    if last > end:
+        end = last - timedelta(days=1)
+    # print(start, end)
+    # print(years)
     # get current version
     if start is None:
         yield fetch_current(url)
@@ -112,20 +146,31 @@ def browse(
         current = start
     # yield date sequence from archive
     versions = set()
-    while current > end:
+    # this_month = {}
+    while current >= end:
         # get screenshots
         screenshots = fetch_archived(url, current)
         for dt in screenshots:
             # get screenshot
             record = fetch_closest_archived(url, dt)
-            if record.date < end:
+            if record.date > start or record.date < end:
                 break
             if record.date not in versions:
                 versions.add(record.date)
-                logging.info(f"Found version from {record.date.strftime('%Y-%m-%d %H:%M:%S')}")
+                # logging.info(f"Found version from {record.date.strftime('%Y-%m-%d %H:%M:%S')}")
                 yield record
                 if not current or record.date < current:
                     current = record.date
+            # # accumulate month stats
+            # year_s = current.strftime('%Y')
+            # month_i = int(current.strftime('%m'))-1
+            # if year_s not in this_month:
+            #     this_month[year_s] = {}
+            # if month_i not in this_month[year_s]:
+            #     this_month[year_s][month_i] = 0
+            # this_month[year_s][month_i] += 1
+            # if years[year_s][month_i] == this_month[year_s][month_i]:
+
         current -= timedelta(days=1)
 
 

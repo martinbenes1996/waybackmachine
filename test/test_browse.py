@@ -10,12 +10,14 @@ class TestBrowse(unittest.TestCase):
 
     def test_response(self):
         archive_browser = waybackmachine.browse(
-            'https://en.wikipedia.org/wiki/COVID-19',
-            start = "2022-08-01", end = "2022-07-01"
+            # 'https://en.wikipedia.org/wiki/COVID-19',
+            'mbenes.me',
+            start = "2022-02-03", end = "2021-12-10"
+            # start = "2022-08-01", end = "2022-07-01"
         )
         previous = None
         for record in archive_browser:
-            # logging.info(record.date)
+            logging.info(record.date)
             # check date order
             if previous is not None:
                 self.assertLess(record.date, previous)
