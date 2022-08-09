@@ -1,3 +1,11 @@
+[![PyPI version](https://badge.fury.io/py/waybackmachine.svg)](https://pypi.org/project/waybackmachine/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/waybackmachine)](https://pypi.org/project/waybackmachine/)
+[![Stars](https://img.shields.io/github/stars/martinbenes1996/waybackmachine.svg)](https://GitHub.com/martinbenes1996/waybackmachine)
+[![Contributors](https://img.shields.io/github/contributors/martinbenes1996/waybackmachine)](https://GitHub.com/martinbenes1996/waybackmachine)
+[![Wheel](https://img.shields.io/pypi/wheel/waybackmachine)](https://pypi.org/project/waybackmachine/)
+[![Status](https://img.shields.io/pypi/status/waybackmachine)](https://pypi.com/project/waybackmachine/)
+[![PyPi license](https://badgen.net/pypi/license/pip/)](https://pypi.com/project/waybackmachine/)
+[![Last commit](https://img.shields.io/github/last-commit/martinbenes1996/waybackmachine)](https://GitHub.com/martinbenes1996/waybackmachine)
 
 # Wayback Machine
 

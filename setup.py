@@ -2,7 +2,7 @@
 import os
 
 # versions
-__version__ = os.environ.get('VERSION_NEW', '0.3.0')
+__version__ = os.environ.get('VERSION_NEW', '0.4.0')
 
 # requirements
 try:
