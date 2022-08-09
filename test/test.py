@@ -5,8 +5,8 @@ import unittest
 sys.path.append(".")
 
 # === unit tests ===
-from test_init import *
-from test_iterate import *
+# from test_init import *
+from test_browse import TestBrowse
 # ==================
 
 

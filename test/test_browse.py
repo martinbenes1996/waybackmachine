@@ -1,28 +1,27 @@
 
-from datetime import datetime, timedelta
 import requests
-import sys
 import unittest
 
 # tested component
-sys.path.append(".")
-from waybackmachine import WaybackMachine
+import waybackmachine
 
-class TestIterate(unittest.TestCase):
-    
+class TestBrowse(unittest.TestCase):
+
     def test_response(self):
-        x = WaybackMachine(
+        archive_browser = waybackmachine.browse(
             'https://www.gov.pl/web/koronawirus/wykaz-zarazen-koronawirusem-sars-cov-2',
-            start = "2020-05-01", end = "2020-04-20")
+            start = "2020-05-01", end = "2020-04-20"
+        )
         previous = None
-        for response,version_date in x:
+        for record in archive_browser:
             # check date order
             if previous is not None:
-                self.assertLess(version_date, previous)
-            previous = version_date
+                self.assertLess(record.date, previous)
+            previous = record.date
             # check status
-            self.assertIsInstance(response, requests.Response)
-    
+            self.assertIsInstance(record.response, requests.Response)
+            print(record.date)
+
     #def test_now(self):
     #    print("test_now")
     #    x = WaybackMachine(
@@ -32,5 +31,4 @@ class TestIterate(unittest.TestCase):
     #        now = datetime.now()
     #        self.assertLess(abs(version_date - now), timedelta(days = 7))
     #        break
-            
-        
+
