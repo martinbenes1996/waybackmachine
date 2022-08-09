@@ -1,4 +1,5 @@
 
+import logging
 import requests
 import unittest
 
@@ -9,18 +10,18 @@ class TestBrowse(unittest.TestCase):
 
     def test_response(self):
         archive_browser = waybackmachine.browse(
-            'https://www.gov.pl/web/koronawirus/wykaz-zarazen-koronawirusem-sars-cov-2',
-            start = "2020-05-01", end = "2020-04-20"
+            'https://en.wikipedia.org/wiki/COVID-19',
+            start = "2022-08-01", end = "2022-07-01"
         )
         previous = None
         for record in archive_browser:
+            # logging.info(record.date)
             # check date order
             if previous is not None:
                 self.assertLess(record.date, previous)
             previous = record.date
             # check status
             self.assertIsInstance(record.response, requests.Response)
-            print(record.date)
 
     #def test_now(self):
     #    print("test_now")
