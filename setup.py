@@ -2,7 +2,7 @@
 import os
 
 # versions
-__version__ = os.environ.get('VERSION_NEW', '0.4.0')
+__version__ = os.environ.get('VERSION_NEW', '0.4.1')
 
 # requirements
 try:
@@ -27,7 +27,6 @@ setuptools.setup(
   license='MPL',
   project_urls={
     "Homepage": "https://pypi.org/project/waybackmachine/",
-    "Documentation": 'https://jpeglib.readthedocs.io/en/latest/',
     "Source": 'https://github.com/martinbenes1996/waybackmachine',
   },
   keywords = ['waybackmachine', 'archive', 'web', 'html', 'webscraping'],

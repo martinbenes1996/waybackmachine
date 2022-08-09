@@ -21,7 +21,7 @@ Install from [pip](https://pypi.org/project/waybackmachine/) with
 pip install waybackmachine
 ```
 
-Simple usage of the `WaybackMachine` class is as
+Simply import the backage and iterate archived versions.
 
 ```python
 import waybackmachine as wm
