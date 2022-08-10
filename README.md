@@ -21,31 +21,41 @@ Install from [pip](https://pypi.org/project/waybackmachine/) with
 pip install waybackmachine
 ```
 
-Simply import the backage and iterate archived versions.
+To fetch the latest version from archive, simply use `fetch()` function.
 
 ```python
 import waybackmachine as wm
 
 url = "https://en.wikipedia.org/wiki/COVID-19"
+latest = wm.fetch(url)
+latest.response  # requests.Response
+latest.date  # capture time
+latest.url  # url
+```
+
+Optionally you can specify date. The first version after this date is chosen.
+
+```python
+may2020 = wm.fetch(url, date="2020-05-01")
+```
+
+### Browsing
+
+You can also iterate archived versions backwards in time.
+
+```python
 for version in wm.browse(url):
     version.response  # requests.Response
     version.date  # capture time
     version.url  # url
 ```
 
-This will iterate the current version, followed by screenshots from [archive.org](https://archive.org/).
-Avoid returning the current (live) version.
-
-```python
-from datetime import datetime
-for version in wm.browse(url, start=datetime.now()):
-    pass
-```
+This will iterate the screenshots from [archive.org](https://archive.org/).
 
 You can specify a custom date range as follows.
 
 ```python
-for version in wm.browse(url, start=datetime(2020,6,30), end=datetime(2020,3,1)):
+for version in wm.browse(url, start='2020-06-30', end='2020-03-01'):
     pass
 ```
 

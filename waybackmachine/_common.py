@@ -1,9 +1,29 @@
 
+import dataclasses
 from datetime import datetime, date, timedelta
+import requests
+import urllib.parse
 
-def parse_datetime(dt):
+def to_urlencode(s):
+    return urllib.parse.quote_plus(s)
+
+
+class WaybackMachineError(Exception):
+    def __init__(self, msg):
+        self._msg = msg
+    def __str__(self):
+        return self._msg
+
+@dataclasses.dataclass
+class WaybackMachineRecord:
+    date:datetime
+    url:str
+    response:requests.Response
+
+
+def parse_datetime(dt, on_none=None):
     if dt is None:
-        return None
+        return on_none
     elif isinstance(dt, datetime):
         return dt
     elif isinstance(dt, date):
