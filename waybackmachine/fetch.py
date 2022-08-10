@@ -161,6 +161,9 @@ def browse(
                 yield record
                 if not current or record.date < current:
                     current = record.date
+
+            # TODO: check if not to skip the rest of the month
+
             # # accumulate month stats
             # year_s = current.strftime('%Y')
             # month_i = int(current.strftime('%m'))-1
