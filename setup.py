@@ -2,7 +2,7 @@
 import os
 
 # versions
-__version__ = os.environ.get('VERSION_NEW', '0.4.2')
+__version__ = os.environ.get('VERSION_NEW', '0.5.0')
 
 # requirements
 try:
@@ -33,7 +33,7 @@ setuptools.setup(
   install_requires = reqs,
   package_dir={'': '.'},
   classifiers=[
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'Intended Audience :: Science/Research',
     'Intended Audience :: Developers',
     'Intended Audience :: Education',
